@@ -3,7 +3,7 @@
 package config
 
 import (
-        "mgmt_exporter/pkg/utils"
+        "uos-mgmt-exporter/pkg/utils"
         "github.com/alecthomas/kingpin"
         "github.com/sirupsen/logrus"
 )

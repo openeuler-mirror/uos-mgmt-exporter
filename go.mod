@@ -1,4 +1,4 @@
-module mgmt_exporter
+module uos-mgmt-exporter
 
 go 1.22
 
