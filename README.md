@@ -19,7 +19,7 @@ UOS Mgmt Exporter 是一个专门为统信UOS操作系统开发的管理资源�
 
 ### 项目结构
 ```
-mgmt_exporter/
+uos-mgmt-exporter/
 ├── main.go                    # 程序入口
 ├── exporter.go               # 主程序逻辑
 ├── config/                   # 配置文件
