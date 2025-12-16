@@ -26,3 +26,16 @@ func NewServer(name, version string) *Server {
         return s
 }
 
+func (s *Server) SetUp() error {
+        defer func() {
+                if s.Error != nil {
+                        logrus.Errorf("SetUp error: %v", s.Error)
+                }
+        }()
+        err := s.parse()
+        if err != nil {
+                logrus.Errorf("Parsing command line arguments failed: %v", err)
+                return err
+        }
+        return nil
+}
