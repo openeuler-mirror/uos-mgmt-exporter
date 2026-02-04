@@ -4,6 +4,11 @@ package exporter
 
 import (
         "uos-mgmt-exporter/pkg/logger"
+        "github.com/alecthomas/kingpin"
+        "github.com/sirupsen/logrus"
+        "gopkg.in/yaml.v2"
+        "time"
+        "os"
 )
 var (
         DefaultConfig = Config{
@@ -18,6 +23,14 @@ var (
         }
 )
 
+func init() {
+	kingpin.HelpFlag.Short('h')
+	Configfile = kingpin.Flag("config", "Configuration file").
+		Short('c').
+		Default("/etc/uos-exporter/mgmt-exporter.yaml").
+		String()
+}
+
 type Config struct {
         Logging     logger.Config `yaml:"log"`
         Address     string        `yaml:"address"`
@@ -25,3 +38,17 @@ type Config struct {
         MetricsPath string        `yaml:"metricsPath"`
 }
 
+func Unpack(config interface{}) error {
+
+    file, err := os.Open(*Configfile)
+	if err != nil {
+		logrus.Error("Failed to open config file: ", err)
+		return err
+	}
+	err = yaml.NewDecoder(file).Decode(config)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
