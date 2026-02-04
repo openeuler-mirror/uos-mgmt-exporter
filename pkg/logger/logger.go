@@ -21,6 +21,13 @@ type fileLogConfig struct {
         level       string
 }
 
+func NewConfig(level, logPath string, maxSize int64, maxAge time.Duration) fileLogConfig {
+	return fileLogConfig{
+		level:       level,
+		FileRotator: NewFileRotator(logPath, maxSize, maxAge),
+	}
+}
+
 func Init(config fileLogConfig) {
         if config.FileRotator == nil {
                 logrus.SetOutput(logrus.StandardLogger().Out)
