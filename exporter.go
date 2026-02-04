@@ -9,7 +9,8 @@ import (
 
 func Run(name string, version string) error {
         logger.InitDefaultLog()
-        server.NewServer(name, version)
+        s := server.NewServer(name, version)
+        s.SetUp()
         return nil
 }
 
