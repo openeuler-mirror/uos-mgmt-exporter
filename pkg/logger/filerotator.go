@@ -35,8 +35,14 @@ func NewFileRotator(basePath string, maxSize int64, maxAge time.Duration) *FileR
 func (fr *FileRotator) Write(p []byte) (n int, err error) {
         err = fr.setupCurrent()
         if err != nil {
-                return 0, err
+               return 0, err
         }
+        if fr.shouldRotate() {
+                err = fr.rotate()
+                if err != nil {
+			        return 0, err
+		        }
+	    }
         n, err = fr.current.Write(p)
         if err != nil {
                 return n, err
@@ -66,4 +72,11 @@ func (fr *FileRotator) setupCurrent() error {
                 }
         }
         return nil
+}
+
+func (fr *FileRotator) shouldRotate() bool {
+	if fr.size > fr.maxSize || time.Now().Sub(fr.startTime) > fr.maxAge {
+		return true
+	}
+	return false
 }
