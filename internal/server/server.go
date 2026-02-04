@@ -5,6 +5,7 @@ package server
 import (
         "os"
         "uos-mgmt-exporter/internal/exporter"
+        "uos-mgmt-exporter/pkg/logger"
 )
 
 var defaultSeverVersion = "1.0.0"
@@ -38,6 +39,17 @@ func (s *Server) SetUp() error {
                 logrus.Errorf("Parsing command line arguments failed: %v", err)
                 return err
         }
+
+        err = s.loadConfig()
+        if err != nil {
+                logrus.Errorf("Loading config file failed: %v", err)
+                return err
+        }
+        err = s.setupLog()
+        if err != nil {
+                logrus.Errorf("SetUp error: %v", err)
+                return err
+        }
         return nil
 }
 
@@ -56,5 +68,16 @@ func (s *Server) loadConfig() error {
 	}
 	logrus.Infof("Loaded config file from: %s", *exporter.Configfile)
 	logrus.Info("CommonConfig file loaded")
+	return nil
+}
+
+func (s *Server) setupLog() error {
+	size, err := humanize.ParseBytes(s.CommonConfig.Logging.MaxSize)
+	if err != nil {
+		logrus.Errorf("Parsing log size failed: %v", err)
+		return err
+	}
+	logConfig := logger.NewConfig(s.CommonConfig.Logging.Level, s.CommonConfig.Logging.LogPath, safeUint64ToInt64(size), s.CommonConfig.Logging.MaxAge)
+	logger.Init(logConfig)
 	return nil
 }
