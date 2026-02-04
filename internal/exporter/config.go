@@ -12,6 +12,7 @@ import (
         "os"
 )
 var (
+        Configfile    *string
         DefaultConfig = Config{
                 Logging: logger.Config{
                         Level:   "debug",
@@ -25,11 +26,11 @@ var (
 )
 
 func init() {
-	kingpin.HelpFlag.Short('h')
-	Configfile = kingpin.Flag("config", "Configuration file").
-		Short('c').
-		Default("/etc/uos-exporter/mgmt-exporter.yaml").
-		String()
+        kingpin.HelpFlag.Short('h')
+        Configfile = kingpin.Flag("config", "Configuration file").
+		        Short('c').
+		        Default("/etc/uos-exporter/mgmt-exporter.yaml").
+		        String()
 }
 
 type Config struct {
