@@ -3,6 +3,7 @@
 package server
 
 import (
+        "os"
         "uos-mgmt-exporter/internal/exporter"
 )
 
@@ -38,4 +39,22 @@ func (s *Server) SetUp() error {
                 return err
         }
         return nil
+}
+
+func (s *Server) loadConfig() error {
+    content, err := os.ReadFile(*exporter.Configfile)
+	if err != nil {
+		logrus.Errorf("Failed to read config file: %v", err)
+		logrus.Info("Use default config")
+		return nil
+	}
+	err = yaml.Unmarshal(content, &s.CommonConfig)
+	if err != nil {
+		logrus.Errorf("Failed to parse config file: %v", err)
+		logrus.Info("Use default config")
+		return nil
+	}
+	logrus.Infof("Loaded config file from: %s", *exporter.Configfile)
+	logrus.Info("CommonConfig file loaded")
+	return nil
 }
