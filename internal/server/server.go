@@ -91,7 +91,34 @@ func (s *Server) setupHttpServer() error {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		landPage.ServeHTTP(w, r)
 	})
+	favicon := NewFavicon()
+	mux.Handle("/favicon.ico", favicon) 
 	return nil
+}
+
+func (s *Server) healthzHandler(w http.ResponseWriter, r *http.Request) {
+	// 构造健康检查响应
+	type healthzResponse struct {
+		Status  string `json:"status"`
+		Message string `json:"message"`
+	}
+	response := healthzResponse{
+		Status:  "ok",
+		Message: fmt.Sprintf("%s is running normally.", s.getName()),
+	}
+
+	// 设置响应头为 JSON 格式
+	w.Header().Set("Content-Type", "application/json")
+
+	// 使用缓冲区编码 JSON 数据，避免部分写入问题
+	buf := new(bytes.Buffer)
+	if err := json.NewEncoder(buf).Encode(response); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// 写入状态码并发送响应体
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *Server) loadConfig() error {
