@@ -4,8 +4,12 @@ package server
 
 import (
         "os"
+        "fmt"
+        "net/http"
+        "time"
         "uos-mgmt-exporter/internal/exporter"
         "uos-mgmt-exporter/pkg/logger"
+        "uos-mgmt-exporter/pkg/ratelimit"
 )
 
 var defaultSeverVersion = "1.0.0"
@@ -69,6 +73,13 @@ func (s *Server) setupHttpServer() error {
 
 	// 原有的路由注册逻辑
 	mux.Handle(s.CommonConfig.MetricsPath, s)
+	if *UseRatelimit {
+		rateLimiter, err := ratelimit.NewRateLimiter(*rateLimitInterval, *rateLimitSize)
+		if err != nil {
+			logrus.Errorf("ratelimit middleware init error: %v", err)
+		}
+		s.Use(Ratelimit(rateLimiter))
+	}
 	addr := fmt.Sprintf("%s:%d", s.CommonConfig.Address, s.CommonConfig.Port)
 	schema := "http"
 	fmt.Fprintf(os.Stdout, "Listening and serving %s on [%s://%s]\n", s.Name, schema, addr)
@@ -110,6 +121,10 @@ func (s *Server) setupLog() error {
 	logConfig := logger.NewConfig(s.CommonConfig.Logging.Level, s.CommonConfig.Logging.LogPath, safeUint64ToInt64(size), s.CommonConfig.Logging.MaxAge)
 	logger.Init(logConfig)
 	return nil
+}
+
+func (s *Server) Use(handlerFuncs ...HandlerFunc) {
+	s.handlers = append(s.handlers, handlerFuncs...)
 }
 
 func (s *Server) Run() error {
