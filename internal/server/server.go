@@ -52,7 +52,35 @@ func (s *Server) SetUp() error {
                 logrus.Errorf("SetUp error: %v", err)
                 return err
         }
+        err = s.setupHttpServer()
+        if err != nil {
+                logrus.Errorf("SetUp error: %v", err)
+                return err
+        }
         return nil
+}
+
+func (s *Server) setupHttpServer() error {
+	exporter.RegisterPrometheus(s.promReg)
+	mux := http.NewServeMux()
+
+	// 注册健康检查接口
+	mux.HandleFunc("/healthz", s.healthzHandler)
+
+	// 原有的路由注册逻辑
+	mux.Handle(s.CommonConfig.MetricsPath, s)
+	addr := fmt.Sprintf("%s:%d", s.CommonConfig.Address, s.CommonConfig.Port)
+	schema := "http"
+	fmt.Fprintf(os.Stdout, "Listening and serving %s on [%s://%s]\n", s.Name, schema, addr)
+	server := &http.Server{
+		Addr:        addr,
+		Handler:     mux,
+		ReadTimeout: 15 * time.Second,
+	}
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		landPage.ServeHTTP(w, r)
+	})
+	return nil
 }
 
 func (s *Server) loadConfig() error {

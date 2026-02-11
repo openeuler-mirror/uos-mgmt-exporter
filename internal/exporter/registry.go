@@ -20,3 +20,8 @@ func NewRegistry() *Registry {
 		metrics: []Metric{},
 	}
 }
+
+func RegisterPrometheus(reg *prometheus.Registry) {
+	reg.MustRegister(defaultReg)
+}
+
