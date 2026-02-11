@@ -83,3 +83,11 @@ func (s *Server) setupLog() error {
 	logger.Init(logConfig)
 	return nil
 }
+
+func (s *Server) Run() error {
+	go utils.HandleSignals(s.Exit)
+	logrus.Infof("%s sucessfully setup. SetUp running.", s.Name)
+
+	logrus.Infof("Runing  %s", s.Name)
+	return nil
+}

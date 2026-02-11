@@ -11,6 +11,15 @@ func Run(name string, version string) error {
         logger.InitDefaultLog()
         s := server.NewServer(name, version)
         s.SetUp()
+        go func() {
+                err := s.Run()
+                if err != nil {
+                        logrus.Errorf("Run error: %v", err)
+                        s.Error = err
+                }
+
+                s.Exit()
+        }()
         return nil
 }
 
