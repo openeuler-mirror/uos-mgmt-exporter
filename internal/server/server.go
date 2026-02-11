@@ -14,6 +14,7 @@ type Server struct {
         Name           string
         Version        string
         CommonConfig   exporter.Config
+        promReg        *prometheus.Registry
 }
 
 func NewServer(name, version string) *Server {
@@ -24,6 +25,7 @@ func NewServer(name, version string) *Server {
                 Name:         name,
                 Version:      version,
                 CommonConfig: exporter.DefaultConfig,
+                promReg:      prometheus.NewRegistry(),
         }
         return s
 }
