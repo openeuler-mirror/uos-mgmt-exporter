@@ -7,6 +7,10 @@ import (
         "time"
 )
 
+var (
+	defaultMaxFiles = 5
+)
+
 type FileRotator struct {
         basePath  string
         maxSize   int64
@@ -14,6 +18,7 @@ type FileRotator struct {
         current   *os.File
         size      int64
         startTime time.Time
+        keepFiles int
 }
 
 func NewFileRotator(basePath string, maxSize int64, maxAge time.Duration) *FileRotator {
@@ -79,4 +84,32 @@ func (fr *FileRotator) shouldRotate() bool {
 		return true
 	}
 	return false
+}
+
+func (fr *FileRotator) rotate() error {
+	if fr.current != nil {
+		err := fr.current.Close()
+		if err != nil {
+			return err
+		}
+	}
+
+	for i := fr.keepFiles - 1; i > 0; i-- {
+		if !utils.FileExists(fr.getLogPath(i)) {
+			continue
+		}
+		err := os.Rename(fr.getLogPath(i), fr.getLogPath(i+1))
+		if err != nil {
+			return err
+		}
+	}
+	err := os.Rename(fr.basePath, fr.getLogPath(1))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (fr *FileRotator) getLogPath(number int) string {
+	return fmt.Sprintf("%s.%d", fr.basePath, number)
 }
