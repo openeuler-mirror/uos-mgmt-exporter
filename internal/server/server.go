@@ -88,6 +88,20 @@ func (s *Server) setupHttpServer() error {
 		Handler:     mux,
 		ReadTimeout: 15 * time.Second,
 	}
+	landConfig := LandingPageConfig{
+		Name:    s.Name,
+		Version: s.Version,
+		Links: []LandingPageLinks{
+			{
+				Text:    "Metrics",
+				Address: s.CommonConfig.MetricsPath,
+			},
+			{
+				Text:    "Health Check",
+				Address: "/healthz",
+			},
+		},
+	}
 	landPage, err := NewLandingPage(landConfig)
 	if err != nil {
 		logrus.Errorf("Failed to create landing page: %v", err)
@@ -98,6 +112,12 @@ func (s *Server) setupHttpServer() error {
 	})
 	favicon := NewFavicon()
 	mux.Handle("/favicon.ico", favicon)
+	s.server = server
+	logrus.Infof("Server is running on %s", addr)
+	if err != nil {
+		logrus.Errorf("Configuring the exporter failed: %v", err)
+		return err
+	}
 	return nil
 }
 
