@@ -56,6 +56,13 @@ func (fr *FileRotator) Write(p []byte) (n int, err error) {
         return n, nil
 }
 
+func (fr *FileRotator) Close() error {
+	if fr.current != nil {
+		return fr.current.Close()
+	}
+	return nil
+}
+
 func (fr *FileRotator) setupCurrent() error {
         if fr.current == nil {
                 fileinfo, err := os.Stat(fr.basePath)
@@ -98,6 +105,13 @@ func (fr *FileRotator) rotate() error {
 		if !utils.FileExists(fr.getLogPath(i)) {
 			continue
 		}
+		if i == fr.keepFiles-1 {
+			err := os.Remove(fr.getLogPath(i))
+			if err != nil {
+				return err
+			}
+			continue
+		}
 		err := os.Rename(fr.getLogPath(i), fr.getLogPath(i+1))
 		if err != nil {
 			return err
@@ -107,6 +121,12 @@ func (fr *FileRotator) rotate() error {
 	if err != nil {
 		return err
 	}
+	fr.current, err = os.Create(fr.basePath)
+	if err != nil {
+		return err
+	}
+	fr.size = 0
+	fr.startTime = time.Now()
 	return nil
 }
 
