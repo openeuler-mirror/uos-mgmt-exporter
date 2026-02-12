@@ -88,11 +88,16 @@ func (s *Server) setupHttpServer() error {
 		Handler:     mux,
 		ReadTimeout: 15 * time.Second,
 	}
+	landPage, err := NewLandingPage(landConfig)
+	if err != nil {
+		logrus.Errorf("Failed to create landing page: %v", err)
+		return err
+	}
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		landPage.ServeHTTP(w, r)
 	})
 	favicon := NewFavicon()
-	mux.Handle("/favicon.ico", favicon) 
+	mux.Handle("/favicon.ico", favicon)
 	return nil
 }
 
