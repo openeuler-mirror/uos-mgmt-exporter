@@ -138,6 +138,12 @@ func (s *Server) healthzHandler(w http.ResponseWriter, r *http.Request) {
 	// 使用缓冲区编码 JSON 数据，避免部分写入问题
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(response); err != nil {
+		// 记录详细的错误日志，包括请求上下文
+		logrus.WithFields(logrus.Fields{
+			"method": r.Method,
+			"path":   r.URL.Path,
+			"error":  err,
+		}).Error("Failed to encode healthz response") 
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
