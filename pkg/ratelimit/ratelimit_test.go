@@ -57,3 +57,35 @@ func TestRateLimiter_TokenRefill(t *testing.T) {
 	}
 }
 
+func TestRateLimiter_Get(t *testing.T) {
+	rl, err := NewRateLimiter(time.Second, 2)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	defer rl.Stop()
+
+	if err := rl.Get(); err != nil {
+		t.Fatalf("expected token, got error: %v", err)
+	}
+
+	if err := rl.Get(); err != nil {
+		t.Fatalf("expected token, got error: %v", err)
+	}
+
+	if err := rl.Get(); err != ErrRateLimited {
+		t.Fatalf("expected rate limit error, got: %v", err)
+	}
+}
+
+func TestRateLimiter_Stop(t *testing.T) {
+	rl, err := NewRateLimiter(time.Second, 2)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	rl.Stop()
+
+	if err := rl.Get(); err != ErrRateLimited {
+		t.Fatalf("expected rate limit error after Stop, got: %v", err)
+	}
+}
