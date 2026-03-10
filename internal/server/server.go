@@ -61,6 +61,15 @@ func (s *Server) SetUp() error {
                 logrus.Errorf("SetUp error: %v", err)
                 return err
         }
+        err = exporter.Unpack(&s.ExporterConfig)
+        if err != nil {
+                logrus.Error("Failed to unpack config: ", err)
+                logrus.Info("Use default config")
+        }
+        if config.ScrapeUrl != nil {
+                logrus.Info("Using command-line parameters to override configuration parameters")
+                s.ExporterConfig.ScrapeUri = *config.ScrapeUrl
+        }
         return nil
 }
 
