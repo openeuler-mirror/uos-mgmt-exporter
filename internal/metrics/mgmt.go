@@ -28,6 +28,31 @@ type Prometheus struct {
 	resourcesState map[string]resStateWithKind
 }
 
+func (p *Prometheus) UpdateState(resUUID string, rtype string, newState ResState) error {
+	//defer p.updateFailingGauge(newState)
+	if p == nil {
+		return nil // happens when mgmt is launched without --prometheus
+	}
+	p.mutex.Lock()
+	p.resourcesState[resUUID] = resStateWithKind{state: newState, kind: rtype}
+	p.mutex.Unlock()
+
+	if newState != ResStateOK {
+		var strState string
+		if newState == ResStateSoftFail {
+			strState = "soft"
+		} else if newState == ResStateHardFail {
+			strState = "hard"
+		} else {
+			return errors.New("state should be soft or hard failure")
+		}
+
+		// 更新 failedResourcesTotal 指标
+		p.failedResourcesTotal.WithLabelValues(rtype, strState).Inc()
+	}
+	return nil
+}
+
 func init() {
 
 	collector := NewMgmtCollect()
@@ -43,6 +68,12 @@ func init() {
 	// 模拟资源状态更新
 	collector.resourcesState["resource1"] = resStateWithKind{state: ResStateSoftFail, kind: "Pod"}
 	collector.resourcesState["resource2"] = resStateWithKind{state: ResStateHardFail, kind: "Deployment"}
+
+	// 模拟资源状态更新
+	if err := collector.UpdateState("resource1", "Pod", ResStateSoftFail); err != nil {
+	fmt.Printf("Warning: Failed to update state for resource1: %v", err)
+	}
+
 	exporter.Register(collector)
 }
 
