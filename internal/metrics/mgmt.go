@@ -28,6 +28,41 @@ type Prometheus struct {
 	resourcesState map[string]resStateWithKind
 }
 
+// updateManagedResources 更新 managedResources 指标
+func (p *Prometheus) updateManagedResources() {
+	resourceCounts := make(map[string]float64)
+
+	// 统计每种资源类型的数量
+	for _, entry := range p.resourcesState {
+		resourceCounts[entry.kind]++
+	}
+
+	// 更新 managedResources 指标
+	for kind, count := range resourceCounts {
+		p.managedResources.WithLabelValues(kind).Set(count)
+	}
+}
+
+func (p *Prometheus) UpdateCheckApplyTotal(kind string, apply, eventful, errorful bool) {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	labels := prometheus.Labels{
+		"kind":     kind,
+		"apply":    strconv.FormatBool(apply),
+		"eventful": strconv.FormatBool(eventful),
+		"errorful": strconv.FormatBool(errorful),
+	}
+	p.checkApplyTotal.With(labels).Inc()
+}
+
+func (p *Prometheus) UpdateManagedResources(kind string, count int) {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	p.managedResources.WithLabelValues(kind).Set(float64(count))
+}
+
 func (p *Prometheus) UpdateState(resUUID string, rtype string, newState ResState) error {
 	//defer p.updateFailingGauge(newState)
 	if p == nil {

@@ -3,41 +3,42 @@
 package exporter
 
 import (
-        "uos-mgmt-exporter/pkg/logger"
-        "uos-mgmt-exporter/pkg/utils"
-        "github.com/alecthomas/kingpin"
-        "github.com/sirupsen/logrus"
-        "gopkg.in/yaml.v2"
-        "time"
-        "os"
+	"github.com/alecthomas/kingpin"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
+	"os"
+	"time"
+	"uos-mgmt-exporter/pkg/logger"
+	"uos-mgmt-exporter/pkg/utils"
 )
+
 var (
-        Configfile    *string
-        DefaultConfig = Config{
-                Logging: logger.Config{
-                        Level:   "debug",
-                        LogPath: "/var/log/uos-exporter/mgmt-exporter.log",
-                        MaxSize: "10MB",
-                        MaxAge:  time.Hour * 24 * 7},
-                Address:     "0.0.0.0",
-                Port:        9098,
-                MetricsPath: "/metrics",
-        }
+	Configfile    *string
+	DefaultConfig = Config{
+		Logging: logger.Config{
+			Level:   "debug",
+			LogPath: "/var/log/uos-exporter/mgmt-exporter.log",
+			MaxSize: "10MB",
+			MaxAge:  time.Hour * 24 * 7},
+		Address:     "0.0.0.0",
+		Port:        9098,
+		MetricsPath: "/metrics",
+	}
 )
 
 func init() {
-        kingpin.HelpFlag.Short('h')
-        Configfile = kingpin.Flag("config", "Configuration file").
-		        Short('c').
-		        Default("/etc/uos-exporter/mgmt-exporter.yaml").
-		        String()
+	kingpin.HelpFlag.Short('h')
+	Configfile = kingpin.Flag("config", "Configuration file").
+		Short('c').
+		Default("/etc/uos-exporter/mgmt-exporter.yaml").
+		String()
 }
 
 type Config struct {
-        Logging     logger.Config `yaml:"log"`
-        Address     string        `yaml:"address"`
-        Port        int           `yaml:"port"`
-        MetricsPath string        `yaml:"metricsPath"`
+	Logging     logger.Config `yaml:"log"`
+	Address     string        `yaml:"address"`
+	Port        int           `yaml:"port"`
+	MetricsPath string        `yaml:"metricsPath"`
 }
 
 func Unpack(config interface{}) error {
