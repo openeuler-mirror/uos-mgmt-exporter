@@ -71,7 +71,13 @@ func init() {
 
 	// 模拟资源状态更新
 	if err := collector.UpdateState("resource1", "Pod", ResStateSoftFail); err != nil {
-	fmt.Printf("Warning: Failed to update state for resource1: %v", err)
+	    fmt.Printf("Warning: Failed to update state for resource1: %v", err)
+	}
+	if err := collector.UpdateState("resource2", "Deployment", ResStateHardFail); err != nil {
+	    fmt.Printf("Warning: Failed to update state for resource2: %v", err)
+	}
+	if err := collector.UpdateState("resource3", "Pod", ResStateSoftFail); err != nil {
+	    fmt.Printf("Warning: Failed to update state for resource3: %v", err)
 	}
 
 	exporter.Register(collector)
