@@ -3,23 +3,31 @@
 package main
 
 import (
-        "uos-mgmt-exporter/pkg/logger"
-        "uos-mgmt-exporter/internal/server"
+    "github.com/sirupsen/logrus"
+    "uos-mgmt-exporter/pkg/logger"
+    "uos-mgmt-exporter/internal/server"
 )
 
 func Run(name string, version string) error {
-        logger.InitDefaultLog()
-        s := server.NewServer(name, version)
-        s.SetUp()
-        go func() {
-                err := s.Run()
-                if err != nil {
-                        logrus.Errorf("Run error: %v", err)
-                        s.Error = err
-                }
+    logger.InitDefaultLog()
+    s := server.NewServer(name, version)
 
-                s.Exit()
-        }()
-        return nil
+    s.PrintVersion()
+    err := s.SetUp()
+	if err != nil {
+		logrus.Errorf("SetUp error: %v", err)
+		return err
+	}
+
+    go func() {
+        err := s.Run()
+        if err != nil {
+            logrus.Errorf("Run error: %v", err)
+            s.Error = err
+        }
+
+        s.Exit()
+    }()
+    return nil
 }
 
