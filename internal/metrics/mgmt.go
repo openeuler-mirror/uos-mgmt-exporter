@@ -31,6 +31,18 @@ type Prometheus struct {
 func init() {
 
 	collector := NewMgmtCollect()
+	collector.UpdateCheckApplyTotal("Pod", true, false, true)
+	collector.UpdateCheckApplyTotal("Pod", true, false, true)
+	collector.UpdateCheckApplyTotal("Pod", true, false, true)
+	collector.UpdateCheckApplyTotal("Pod", true, false, true)
+	collector.UpdateCheckApplyTotal("Deployment", false, true, false)
+
+	// 更新 managedResources
+	collector.UpdateManagedResources("Pod", 5)
+
+	// 模拟资源状态更新
+	collector.resourcesState["resource1"] = resStateWithKind{state: ResStateSoftFail, kind: "Pod"}
+	collector.resourcesState["resource2"] = resStateWithKind{state: ResStateHardFail, kind: "Deployment"}
 	exporter.Register(collector)
 }
 
