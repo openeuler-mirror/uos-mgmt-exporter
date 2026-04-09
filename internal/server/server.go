@@ -159,6 +159,14 @@ func (s *Server) healthzHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 写入状态码并发送响应体
 	w.WriteHeader(http.StatusOK)
+	if _, err := buf.WriteTo(w); err != nil {
+		// 记录写入失败的日志
+		logrus.WithFields(logrus.Fields{
+			"method": r.Method,
+			"path":   r.URL.Path,
+			"error":  err,
+		}).Error("Failed to write healthz response to client")
+	}
 }
 
 func (s *Server) loadConfig() error {
