@@ -3,74 +3,92 @@
 package server
 
 import (
-        "os"
-        "fmt"
-        "net/http"
-        "time"
-        "uos-mgmt-exporter/internal/exporter"
-        "uos-mgmt-exporter/pkg/logger"
-        "uos-mgmt-exporter/pkg/ratelimit"
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+	"uos-mgmt-exporter/internal/exporter"
+	"uos-mgmt-exporter/pkg/logger"
+	"uos-mgmt-exporter/pkg/ratelimit"
 )
 
 var defaultSeverVersion = "1.0.0"
 
 type Server struct {
-        Name           string
-        Version        string
-        CommonConfig   exporter.Config
-        promReg        *prometheus.Registry
+	Name         string
+	Version      string
+	CommonConfig exporter.Config
+	promReg      *prometheus.Registry
 }
 
 func NewServer(name, version string) *Server {
-        if version == "" {
-                version = defaultSeverVersion
-        }
-        s := &Server{
-                Name:         name,
-                Version:      version,
-                CommonConfig: exporter.DefaultConfig,
-                promReg:      prometheus.NewRegistry(),
-        }
-        return s
+	if version == "" {
+		version = defaultSeverVersion
+	}
+	s := &Server{
+		Name:         name,
+		Version:      version,
+		CommonConfig: exporter.DefaultConfig,
+		promReg:      prometheus.NewRegistry(),
+	}
+	return s
 }
 
 func (s *Server) SetUp() error {
-        defer func() {
-                if s.Error != nil {
-                        logrus.Errorf("SetUp error: %v", s.Error)
-                }
-        }()
-        err := s.parse()
-        if err != nil {
-                logrus.Errorf("Parsing command line arguments failed: %v", err)
-                return err
-        }
+	defer func() {
+		if s.Error != nil {
+			logrus.Errorf("SetUp error: %v", s.Error)
+		}
+	}()
+	err := s.parse()
+	if err != nil {
+		logrus.Errorf("Parsing command line arguments failed: %v", err)
+		return err
+	}
 
-        err = s.loadConfig()
-        if err != nil {
-                logrus.Errorf("Loading config file failed: %v", err)
-                return err
-        }
-        err = s.setupLog()
-        if err != nil {
-                logrus.Errorf("SetUp error: %v", err)
-                return err
-        }
-        err = s.setupHttpServer()
-        if err != nil {
-                logrus.Errorf("SetUp error: %v", err)
-                return err
-        }
-        err = exporter.Unpack(&s.ExporterConfig)
-        if err != nil {
-                logrus.Error("Failed to unpack config: ", err)
-                logrus.Info("Use default config")
-        }
-        if config.ScrapeUrl != nil {
-                logrus.Info("Using command-line parameters to override configuration parameters")
-                s.ExporterConfig.ScrapeUri = *config.ScrapeUrl
-        }
-        return nil
+	err = s.loadConfig()
+	if err != nil {
+		logrus.Errorf("Loading config file failed: %v", err)
+		return err
+	}
+	err = s.setupLog()
+	if err != nil {
+		logrus.Errorf("SetUp error: %v", err)
+		return err
+	}
+	err = s.setupHttpServer()
+	if err != nil {
+		logrus.Errorf("SetUp error: %v", err)
+		return err
+	}
+	err = exporter.Unpack(&s.ExporterConfig)
+	if err != nil {
+		logrus.Error("Failed to unpack config: ", err)
+		logrus.Info("Use default config")
+	}
+	if config.ScrapeUrl != nil {
+		logrus.Info("Using command-line parameters to override configuration parameters")
+		s.ExporterConfig.ScrapeUri = *config.ScrapeUrl
+	}
+	return nil
+}
+
+// 获取 Name 字段的线程安全方法
+func (s *Server) getName() string {
+	// s.mu.RLock()
+	// defer s.mu.RUnlock()
+	return s.Name
+}
+
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	req := s.createRequest(w, r)
+	for _, handler := range s.handlers {
+		handler(req)
+		if req.Error != nil {
+			return
+		}
+	}
+	promhttp.HandlerFor(s.promReg, promhttp.HandlerOpts{}).ServeHTTP(w, r)
 }
 
 func (s *Server) setupHttpServer() error {
@@ -152,7 +170,7 @@ func (s *Server) healthzHandler(w http.ResponseWriter, r *http.Request) {
 			"method": r.Method,
 			"path":   r.URL.Path,
 			"error":  err,
-		}).Error("Failed to encode healthz response") 
+		}).Error("Failed to encode healthz response")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -170,7 +188,7 @@ func (s *Server) healthzHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) loadConfig() error {
-    content, err := os.ReadFile(*exporter.Configfile)
+	content, err := os.ReadFile(*exporter.Configfile)
 	if err != nil {
 		logrus.Errorf("Failed to read config file: %v", err)
 		logrus.Info("Use default config")
