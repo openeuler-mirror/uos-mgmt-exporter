@@ -28,6 +28,10 @@ func Run(name string, version string) error {
 
         s.Exit()
     }()
-    return nil
+	select {
+	    case <-s.ExitSignal:
+		    s.Stop()
+		    logrus.Info("Exit exporter server completed")
+		    return s.Error
+	}
 }
-
