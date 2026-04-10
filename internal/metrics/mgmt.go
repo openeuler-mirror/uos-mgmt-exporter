@@ -11,6 +11,14 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+type ResState int
+
+const (
+	ResStateOK ResState = iota
+	ResStateSoftFail
+	ResStateHardFail
+)
+
 type resStateWithKind struct {
 	state ResState
 	kind  string
@@ -26,6 +34,28 @@ type Prometheus struct {
 
 	// 状态管理
 	resourcesState map[string]resStateWithKind
+}
+
+// updateFailingGauge 更新失败资源指标
+func (p *Prometheus) updateFailingGauge(ch chan<- prometheus.Metric) {
+	softFails := make(map[string]float64)
+	hardFails := make(map[string]float64)
+
+	for _, entry := range p.resourcesState {
+		switch entry.state {
+		case ResStateSoftFail:
+			softFails[entry.kind]++
+		case ResStateHardFail:
+			hardFails[entry.kind]++
+		}
+	}
+
+	for kind, count := range softFails {
+		p.failedResources.WithLabelValues(kind, "soft").Set(count)
+	}
+	for kind, count := range hardFails {
+		p.failedResources.WithLabelValues(kind, "hard").Set(count)
+	}
 }
 
 // updateManagedResources 更新 managedResources 指标
