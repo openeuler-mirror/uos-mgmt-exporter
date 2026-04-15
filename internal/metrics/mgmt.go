@@ -34,6 +34,7 @@ type Prometheus struct {
 
 	// 状态管理
 	resourcesState map[string]resStateWithKind
+    mutex          sync.Mutex
 }
 
 // updateFailingGauge 更新失败资源指标

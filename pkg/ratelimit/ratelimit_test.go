@@ -3,7 +3,6 @@
 package ratelimit
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )

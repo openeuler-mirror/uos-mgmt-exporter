@@ -10,15 +10,23 @@ import (
 	"uos-mgmt-exporter/internal/exporter"
 	"uos-mgmt-exporter/pkg/logger"
 	"uos-mgmt-exporter/pkg/ratelimit"
+
+	"github.com/sirupsen/logrus"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var defaultSeverVersion = "1.0.0"
 
 type Server struct {
-	Name         string
-	Version      string
-	CommonConfig exporter.Config
-	promReg      *prometheus.Registry
+	Name           string
+	Version        string
+	CommonConfig   exporter.Config
+	promReg        *prometheus.Registry
+    handlers       []HandlerFunc
+    ExporterConfig config.Settings
+    Error          error
+    server         *http.Server
 }
 
 func NewServer(name, version string) *Server {
