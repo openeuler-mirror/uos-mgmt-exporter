@@ -4,7 +4,7 @@
 package server
 
 import (
-	"mgmt_exporter/pkg/ratelimit"
+	"uos-mgmt-exporter/pkg/ratelimit"
 	"github.com/alecthomas/kingpin"
 	"github.com/sirupsen/logrus"
 	"time"

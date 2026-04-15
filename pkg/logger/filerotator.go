@@ -7,7 +7,7 @@ import (
     "fmt"
     "time"
     "path/filepath"
-    "mgmt_exporter/pkg/utils"
+    "uos-mgmt-exporter/pkg/utils"
 )
 
 var (
