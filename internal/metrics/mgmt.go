@@ -7,7 +7,7 @@ import (
 	"errors"
 	"sync"
 	"strconv"
-	"mgmt_exporter/internal/exporter"
+	"uos-mgmt-exporter/internal/exporter"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
