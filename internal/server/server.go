@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"os"
 	"time"
+    "encoding/json"
 	"uos-mgmt-exporter/internal/exporter"
 	"uos-mgmt-exporter/pkg/logger"
 	"uos-mgmt-exporter/pkg/ratelimit"
 
 	"github.com/sirupsen/logrus"
+    "example.com/mgmt_exporter/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -79,6 +81,12 @@ func (s *Server) SetUp() error {
 		s.ExporterConfig.ScrapeUri = *config.ScrapeUrl
 	}
 	return nil
+}
+
+func (s *Server) createRequest(w http.ResponseWriter, r *http.Request) *Request {
+	req := NewRequest(w, r)
+	req.handlers = s.handlers
+	return req
 }
 
 // 获取 Name 字段的线程安全方法
@@ -193,6 +201,11 @@ func (s *Server) healthzHandler(w http.ResponseWriter, r *http.Request) {
 			"error":  err,
 		}).Error("Failed to write healthz response to client")
 	}
+}
+
+func (s *Server) parse() error {
+	kingpin.Parse()
+	return nil
 }
 
 func (s *Server) loadConfig() error {
