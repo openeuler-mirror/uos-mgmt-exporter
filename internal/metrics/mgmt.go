@@ -37,6 +37,29 @@ type Prometheus struct {
     mutex          sync.Mutex
 }
 
+func (p *Prometheus) Describe(ch chan<- *prometheus.Desc) {
+	p.checkApplyTotal.Describe(ch)
+	p.failedResources.Describe(ch)
+}
+
+func (p *Prometheus) Collect(ch chan<- prometheus.Metric) {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	// 更新 pgraphStartTimeSeconds
+	p.pgraphStartTimeSeconds.SetToCurrentTime()
+
+	// 更新 managedResources
+	p.updateManagedResources()
+
+	// 更新 failedResources
+	p.updateFailingGauge(ch)
+
+	// 收集所有指标
+	p.checkApplyTotal.Collect(ch)
+	p.failedResources.Collect(ch)
+}
+
 // updateFailingGauge 更新失败资源指标
 func (p *Prometheus) updateFailingGauge(ch chan<- prometheus.Metric) {
 	softFails := make(map[string]float64)

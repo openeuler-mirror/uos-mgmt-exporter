@@ -12,6 +12,8 @@ import (
 	"uos-mgmt-exporter/pkg/logger"
 	"uos-mgmt-exporter/pkg/ratelimit"
 
+	"github.com/alecthomas/kingpin"
+	"github.com/dustin/go-humanize"
 	"github.com/sirupsen/logrus"
     "example.com/mgmt_exporter/config"
 	"github.com/prometheus/client_golang/prometheus"
@@ -201,6 +203,12 @@ func (s *Server) healthzHandler(w http.ResponseWriter, r *http.Request) {
 			"error":  err,
 		}).Error("Failed to write healthz response to client")
 	}
+}
+
+func (s *Server) Exit() {
+	s.callback.Do(func() {
+		close(s.ExitSignal)
+	})
 }
 
 func (s *Server) parse() error {
