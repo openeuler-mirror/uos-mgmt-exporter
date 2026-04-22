@@ -7,6 +7,8 @@ import (
     "net/url"
 )
 
+// ValidateURI validates a URI string, ensuring it has a valid format
+// and uses either http or https scheme.
 func ValidateURI(uri string) error {
     parsedURL, err := url.ParseRequestURI(uri)
     if err != nil {
