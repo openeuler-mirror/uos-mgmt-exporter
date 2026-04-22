@@ -20,7 +20,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-var defaultSeverVersion = "1.0.0"
+var defaultServerVersion = "1.0.0"
 
 type Server struct {
 	Name           string
@@ -35,7 +35,7 @@ type Server struct {
 
 func NewServer(name, version string) *Server {
 	if version == "" {
-		version = defaultSeverVersion
+		version = defaultServerVersion
 	}
 	s := &Server{
 		Name:         name,
