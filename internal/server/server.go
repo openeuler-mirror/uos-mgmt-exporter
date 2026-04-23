@@ -3,7 +3,9 @@
 package server
 
 import (
+	"bytes"
 	"fmt"
+	"math"
 	"net/http"
 	"os"
 	"time"
@@ -18,6 +20,7 @@ import (
     "example.com/mgmt_exporter/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"gopkg.in/yaml.v2"
 )
 
 var defaultServerVersion = "1.0.0"
