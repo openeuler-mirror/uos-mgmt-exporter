@@ -159,10 +159,6 @@ func (s *Server) setupHttpServer() error {
 	mux.Handle("/favicon.ico", favicon)
 	s.server = server
 	logrus.Infof("Server is running on %s", addr)
-	if err != nil {
-		logrus.Errorf("Configuring the exporter failed: %v", err)
-		return err
-	}
 	return nil
 }
 
