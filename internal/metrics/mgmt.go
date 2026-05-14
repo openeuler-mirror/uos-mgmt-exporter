@@ -19,11 +19,6 @@ const (
 	ResStateHardFail
 )
 
-type resStateWithKind struct {
-	state ResState
-	kind  string
-}
-
 type Prometheus struct {
 	listen string
 
@@ -37,6 +32,11 @@ type Prometheus struct {
 	// 状态管理
 	resourcesState map[string]resStateWithKind
 	mutex          sync.Mutex
+}
+
+type resStateWithKind struct {
+	state ResState
+	kind  string
 }
 
 func (p *Prometheus) Describe(ch chan<- *prometheus.Desc) {
