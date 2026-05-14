@@ -60,6 +60,9 @@ func (p *Prometheus) Collect(ch chan<- prometheus.Metric) {
 
 	// 收集所有指标
 	p.checkApplyTotal.Collect(ch)
+	p.pgraphStartTimeSeconds.Collect(ch)
+	p.managedResources.Collect(ch)
+	p.failedResourcesTotal.Collect(ch)
 	p.failedResources.Collect(ch)
 }
 
