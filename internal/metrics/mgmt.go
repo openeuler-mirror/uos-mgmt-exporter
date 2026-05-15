@@ -39,6 +39,9 @@ type Prometheus struct {
 
 func (p *Prometheus) Describe(ch chan<- *prometheus.Desc) {
 	p.checkApplyTotal.Describe(ch)
+	p.pgraphStartTimeSeconds.Describe(ch)
+	p.managedResources.Describe(ch)
+	p.failedResourcesTotal.Describe(ch)
 	p.failedResources.Describe(ch)
 }
 
