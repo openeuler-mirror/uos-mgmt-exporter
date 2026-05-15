@@ -42,3 +42,12 @@ func TestPrometheusMetrics(t *testing.T) {
 	validateMetrics(t, collector)
 }
 
+// validateMetrics 验证指标是否正确更新
+func validateMetrics(t *testing.T, collector *Prometheus) {
+	// 收集所有注册的指标
+	metricFamilies, err := prometheus.DefaultGatherer.Gather()
+	if err != nil {
+		t.Fatalf("Failed to gather metrics: %v", err)
+	}
+
+
