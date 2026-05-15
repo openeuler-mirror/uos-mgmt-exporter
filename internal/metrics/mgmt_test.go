@@ -68,3 +68,24 @@ func validateMetrics(t *testing.T, collector *Prometheus) {
 				labels[*label.Name] = *label.Value
 			}
 
+			// 构建指标键
+			key := *mf.Name
+			if len(labels) > 0 {
+				key += "{"
+				for k, v := range labels {
+					key += k + `="` + v + `",`
+				}
+				key = key[:len(key)-1] + "}"
+			}
+
+			// 获取指标值
+			var value float64
+			switch {
+			case metric.Counter != nil:
+				value = metric.Counter.GetValue()
+			case metric.Gauge != nil:
+				value = metric.Gauge.GetValue()
+			default:
+				continue
+			}
+
