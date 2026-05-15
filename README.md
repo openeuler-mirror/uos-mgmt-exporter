@@ -56,14 +56,14 @@ uos-mgmt-exporter/
 ### 从源码编译
 
 ```bash
-git clone https://gitee.com/deepin-community/uos-mgmt-exporter.git
+git clone https://atomgit.com/deepin-community/uos-mgmt-exporter.git
 cd uos-mgmt-exporter
 go build
 ```
 
 ### 二进制安装
 
-从 [发布页面](https://gitee.com/deepin-community/uos-mgmt-exporter/releases) 下载适用于您系统的最新二进制文件。
+从 [发布页面](https://atomgit.com/deepin-community/uos-mgmt-exporter/releases) 下载适用于您系统的最新二进制文件。
 
 ## 使用方法
 
