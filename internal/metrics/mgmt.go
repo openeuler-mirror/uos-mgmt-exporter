@@ -25,6 +25,8 @@ type resStateWithKind struct {
 }
 
 type Prometheus struct {
+	listen string
+
 	// 指标
 	checkApplyTotal        *prometheus.CounterVec
 	pgraphStartTimeSeconds prometheus.Gauge
@@ -34,7 +36,7 @@ type Prometheus struct {
 
 	// 状态管理
 	resourcesState map[string]resStateWithKind
-    mutex          sync.Mutex
+	mutex          sync.Mutex
 }
 
 func (p *Prometheus) Describe(ch chan<- *prometheus.Desc) {
@@ -60,6 +62,9 @@ func (p *Prometheus) Collect(ch chan<- prometheus.Metric) {
 
 	// 收集所有指标
 	p.checkApplyTotal.Collect(ch)
+	p.pgraphStartTimeSeconds.Collect(ch)
+	p.managedResources.Collect(ch)
+	p.failedResourcesTotal.Collect(ch)
 	p.failedResources.Collect(ch)
 }
 
