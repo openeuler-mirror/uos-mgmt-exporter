@@ -89,3 +89,12 @@ func validateMetrics(t *testing.T, collector *Prometheus) {
 				continue
 			}
 
+			// 验证指标值
+			if expectedValue, ok := expectedMetrics[key]; ok {
+				if value != expectedValue {
+					t.Errorf("Metric %s: expected %f, got %f", key, expectedValue, value)
+				}
+			}
+		}
+	}
+}
