@@ -22,10 +22,6 @@ type Registry struct {
 	mu      sync.RWMutex
 }
 
-func init() {
-	defaultReg = NewRegistry()
-}
-
 func NewRegistry() *Registry {
 	return &Registry{
 		metrics: []Metric{},
