@@ -21,7 +21,7 @@ import (
 	"github.com/alecthomas/kingpin"
 	"github.com/dustin/go-humanize"
 	"github.com/sirupsen/logrus"
-    "example.com/mgmt_exporter/config"
+	"uos-mgmt-exporter/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"gopkg.in/yaml.v2"
