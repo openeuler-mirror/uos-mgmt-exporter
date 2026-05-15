@@ -99,3 +99,13 @@ func TestWd(t *testing.T) {
 
 	close(ch)
 
+	for i := 0; i < 5; i++ {
+		value, ok := <-ch
+		if !ok {
+			fmt.Println("Channel 已关闭，没有更多数据")
+		} else {
+			fmt.Println("接收到数据:", value)
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+}
