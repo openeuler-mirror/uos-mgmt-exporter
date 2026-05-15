@@ -274,6 +274,10 @@ func (s *Server) Run() error {
 	return nil
 }
 
+func (s *Server) PrintVersion() {
+	logrus.Printf("%s version: %s\n", s.Name, s.Version)
+}
+
 func safeUint64ToInt64(value uint64) int64 {
 	if value > math.MaxInt64 {
 		return int64(math.MaxInt64)
