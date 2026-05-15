@@ -1,0 +1,9 @@
+[Unit]
+Description=mgmt-exporter request metrics
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/bin/mgmt-exporter
+ExecReload=/bin/kill -HUP $MAINPID

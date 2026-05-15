@@ -89,3 +89,23 @@ func TestRateLimiter_Stop(t *testing.T) {
 		t.Fatalf("expected rate limit error after Stop, got: %v", err)
 	}
 }
+
+func TestWd(t *testing.T) {
+	ch := make(chan int, 3) // 创建一个带缓冲的 channel
+
+	ch <- 1
+	ch <- 2
+	ch <- 3
+
+	close(ch)
+
+	for i := 0; i < 5; i++ {
+		value, ok := <-ch
+		if !ok {
+			fmt.Println("Channel 已关闭，没有更多数据")
+		} else {
+			fmt.Println("接收到数据:", value)
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+}
