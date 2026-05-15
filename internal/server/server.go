@@ -251,6 +251,13 @@ func (s *Server) setupLog() error {
 	return nil
 }
 
+func (s *Server) setupCmdArg() {
+	if config.ScrapeUrl != nil {
+		logrus.Info("Using command-line parameters to override configuration parameters")
+		s.ExporterConfig.ScrapeUri = *config.ScrapeUrl
+	}
+}
+
 func (s *Server) Use(handlerFuncs ...HandlerFunc) {
 	s.handlers = append(s.handlers, handlerFuncs...)
 }
