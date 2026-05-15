@@ -278,6 +278,16 @@ func (s *Server) PrintVersion() {
 	logrus.Printf("%s version: %s\n", s.Name, s.Version)
 }
 
+func (s *Server) Stop() {
+	logrus.Info("Stopping Server")
+	logger.LogOutput("Shutting down server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	if err := s.server.Shutdown(ctx); err != nil {
+		logrus.Errorf("Server Shutdown Error: %s", err)
+	}
+}
+
 func safeUint64ToInt64(value uint64) int64 {
 	if value > math.MaxInt64 {
 		return int64(math.MaxInt64)
