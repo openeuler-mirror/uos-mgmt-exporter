@@ -14,3 +14,10 @@ func TestPrometheusMetrics(t *testing.T) {
 	// 初始化 Prometheus 收集器
 	collector := NewMgmtCollect()
 
+	// 模拟资源操作
+	collector.UpdateCheckApplyTotal("Pod", true, false, true)
+	collector.UpdateCheckApplyTotal("Pod", true, false, true)
+	collector.UpdateCheckApplyTotal("Pod", true, false, true)
+	collector.UpdateCheckApplyTotal("Pod", true, false, true)
+	collector.UpdateCheckApplyTotal("Deployment", false, true, false)
+
