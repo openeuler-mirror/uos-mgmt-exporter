@@ -251,6 +251,13 @@ func (s *Server) setupLog() error {
 	return nil
 }
 
+func (s *Server) setupCmdArg() {
+	if config.ScrapeUrl != nil {
+		logrus.Info("Using command-line parameters to override configuration parameters")
+		s.ExporterConfig.ScrapeUri = *config.ScrapeUrl
+	}
+}
+
 func (s *Server) Use(handlerFuncs ...HandlerFunc) {
 	s.handlers = append(s.handlers, handlerFuncs...)
 }
@@ -260,7 +267,15 @@ func (s *Server) Run() error {
 	logrus.Infof("%s sucessfully setup. SetUp running.", s.Name)
 
 	logrus.Infof("Runing  %s", s.Name)
+	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		logrus.Errorf("ListenAndServe Error: %s\n", err)
+		return err
+	}
 	return nil
+}
+
+func (s *Server) PrintVersion() {
+	logrus.Printf("%s version: %s\n", s.Name, s.Version)
 }
 
 func safeUint64ToInt64(value uint64) int64 {
