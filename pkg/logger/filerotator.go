@@ -77,7 +77,7 @@ func (fr *FileRotator) setupCurrent() error {
              fr.size = fileinfo.Size()
              fr.startTime = fileinfo.ModTime()
          } else if os.IsNotExist(err) {
-             fr.current, err = os.Create(fr.basePath)
+             fr.current, err = os.OpenFile(fr.basePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
              if err != nil {
                  return err
              }
@@ -124,7 +124,7 @@ func (fr *FileRotator) rotate() error {
 	if err != nil {
 		return err
 	}
-	fr.current, err = os.Create(fr.basePath)
+	fr.current, err = os.OpenFile(fr.basePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}
