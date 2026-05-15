@@ -34,10 +34,12 @@ type Server struct {
 	Version        string
 	CommonConfig   exporter.Config
 	promReg        *prometheus.Registry
-    handlers       []HandlerFunc
-    ExporterConfig config.Settings
-    Error          error
-    server         *http.Server
+	handlers       []HandlerFunc
+	ExitSignal     chan struct{}
+	Error          error
+	callback       sync.Once
+	ExporterConfig config.Settings
+	server         *http.Server
 }
 
 func NewServer(name, version string) *Server {
