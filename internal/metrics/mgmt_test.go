@@ -78,3 +78,14 @@ func validateMetrics(t *testing.T, collector *Prometheus) {
 				key = key[:len(key)-1] + "}"
 			}
 
+			// 获取指标值
+			var value float64
+			switch {
+			case metric.Counter != nil:
+				value = metric.Counter.GetValue()
+			case metric.Gauge != nil:
+				value = metric.Gauge.GetValue()
+			default:
+				continue
+			}
+
