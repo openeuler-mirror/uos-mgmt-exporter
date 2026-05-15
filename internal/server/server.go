@@ -13,8 +13,10 @@ import (
 	"time"
     "encoding/json"
 	"uos-mgmt-exporter/internal/exporter"
+	_ "uos-mgmt-exporter/internal/metrics"
 	"uos-mgmt-exporter/pkg/logger"
 	"uos-mgmt-exporter/pkg/ratelimit"
+	"uos-mgmt-exporter/pkg/utils"
 
 	"github.com/alecthomas/kingpin"
 	"github.com/dustin/go-humanize"
