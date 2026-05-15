@@ -267,6 +267,10 @@ func (s *Server) Run() error {
 	logrus.Infof("%s sucessfully setup. SetUp running.", s.Name)
 
 	logrus.Infof("Runing  %s", s.Name)
+	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		logrus.Errorf("ListenAndServe Error: %s\n", err)
+		return err
+	}
 	return nil
 }
 
