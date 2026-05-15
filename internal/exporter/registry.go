@@ -9,6 +9,14 @@ import (
 
 var defaultReg *Registry
 
+func init() {
+	defaultReg = NewRegistry()
+}
+
+func Register(metric Metric) {
+	defaultReg.Register(metric)
+}
+
 type Registry struct {
 	metrics []Metric
 	mu      sync.RWMutex
