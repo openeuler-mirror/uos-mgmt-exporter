@@ -9,6 +9,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"sync"
 	"time"
     "encoding/json"
 	"uos-mgmt-exporter/internal/exporter"
