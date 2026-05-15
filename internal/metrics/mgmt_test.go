@@ -29,3 +29,25 @@ func TestPrometheusMetrics(t *testing.T) {
 	collector.UpdateState("resource2", "Deployment", ResStateHardFail)
 	collector.UpdateState("resource3", "Pod", ResStateSoftFail)
 
+	// 启动 HTTP 服务以暴露指标
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		http.ListenAndServe(":9233", nil)
+	}()
+
+	// 等待 HTTP 服务启动
+	time.Sleep(2 * time.Second)
+
+	// 验证指标是否正确更新
+	validateMetrics(t, collector)
+}
+
+// validateMetrics 验证指标是否正确更新
+func validateMetrics(t *testing.T, collector *Prometheus) {
+	// 收集所有注册的指标
+	metricFamilies, err := prometheus.DefaultGatherer.Gather()
+	if err != nil {
+		t.Fatalf("Failed to gather metrics: %v", err)
+	}
+
+
