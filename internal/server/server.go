@@ -51,6 +51,7 @@ func NewServer(name, version string) *Server {
 		Version:      version,
 		CommonConfig: exporter.DefaultConfig,
 		promReg:      prometheus.NewRegistry(),
+		ExitSignal:   make(chan struct{}),
 	}
 	return s
 }
