@@ -7,3 +7,8 @@ After=network-online.target
 Restart=on-failure
 ExecStart=/usr/bin/mgmt-exporter
 ExecReload=/bin/kill -HUP $MAINPID
+TimeoutStopSec=20s
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target
