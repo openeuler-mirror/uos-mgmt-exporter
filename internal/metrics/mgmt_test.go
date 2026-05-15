@@ -29,3 +29,16 @@ func TestPrometheusMetrics(t *testing.T) {
 	collector.UpdateState("resource2", "Deployment", ResStateHardFail)
 	collector.UpdateState("resource3", "Pod", ResStateSoftFail)
 
+	// 启动 HTTP 服务以暴露指标
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		http.ListenAndServe(":9233", nil)
+	}()
+
+	// 等待 HTTP 服务启动
+	time.Sleep(2 * time.Second)
+
+	// 验证指标是否正确更新
+	validateMetrics(t, collector)
+}
+
