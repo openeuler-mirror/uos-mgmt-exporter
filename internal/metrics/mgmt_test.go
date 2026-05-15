@@ -59,3 +59,12 @@ func validateMetrics(t *testing.T, collector *Prometheus) {
 		`mgmt_failures_total{kind="Deployment",failure="hard"}`: 1,
 	}
 
+	// 遍历指标，验证预期值
+	for _, mf := range metricFamilies {
+		for _, metric := range mf.Metric {
+			// 获取指标名称和标签
+			labels := make(map[string]string)
+			for _, label := range metric.Label {
+				labels[*label.Name] = *label.Value
+			}
+
