@@ -50,4 +50,21 @@ func validateMetrics(t *testing.T, collector *Prometheus) {
 		t.Fatalf("Failed to gather metrics: %v", err)
 	}
 
+	// 定义预期的指标值
+	expectedMetrics := map[string]float64{
+		`mgmt_checkapply_total{kind="Pod",apply="true",eventful="false",errorful="true"}`: 4,
+		`mgmt_checkapply_total{kind="Deployment",apply="false",eventful="true",errorful="false"}`: 1,
+		`mgmt_resources{kind="Pod"}`: 5,
+		`mgmt_failures_total{kind="Pod",failure="soft"}`: 2,
+		`mgmt_failures_total{kind="Deployment",failure="hard"}`: 1,
+	}
+
+	// 遍历指标，验证预期值
+	for _, mf := range metricFamilies {
+		for _, metric := range mf.Metric {
+			// 获取指标名称和标签
+			labels := make(map[string]string)
+			for _, label := range metric.Label {
+				labels[*label.Name] = *label.Value
+			}
 
