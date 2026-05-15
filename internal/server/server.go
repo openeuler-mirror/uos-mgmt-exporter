@@ -284,7 +284,13 @@ func (s *Server) Stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	if err := s.server.Shutdown(ctx); err != nil {
-		logrus.Errorf("Server Shutdown Error: %s", err)
+		if ctx.Err() == context.DeadlineExceeded {
+			logrus.Warn("Server shutdown timed out")
+		} else {
+			logrus.Errorf("Server Shutdown Error: %s", err)
+		}
+	} else {
+		logrus.Info("Server gracefully stopped")
 	}
 }
 
