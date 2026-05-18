@@ -23,9 +23,7 @@ type Registry struct {
 }
 
 func NewRegistry() *Registry {
-	return &Registry{
-		metrics: []Metric{},
-	}
+	return &Registry{}
 }
 
 func RegisterPrometheus(reg *prometheus.Registry) {
