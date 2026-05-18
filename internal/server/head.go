@@ -3,7 +3,7 @@
 package server
 
 import (
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -16,7 +16,7 @@ func NewFavicon() *favicon {
 func (f *favicon) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/x-icon")
 	if _, err := w.Write(faviconBodys); err != nil {
-		fmt.Printf("Warning: The response to writing the favicon failed: %v\n", err)
+		logrus.Warnf("Failed to write favicon response: %v", err)
 	}
 }
 
