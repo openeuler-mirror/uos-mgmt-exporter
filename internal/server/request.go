@@ -3,7 +3,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -24,10 +23,6 @@ func NewRequest(w http.ResponseWriter, r *http.Request) *Request {
 }
 
 func (r *Request) Fail(status int) {
-	r.ResponseWriter.Header().Set("Content-Type", "text/html")
-	r.ResponseWriter.WriteHeader(status)
-	if _, err := r.ResponseWriter.Write([]byte(r.Error.Error())); err != nil {
-		fmt.Printf("Warning: Failed to write error response to client: %v", err)
-	}
+	http.Error(r.ResponseWriter, http.StatusText(status), status)
 }
 
