@@ -90,7 +90,7 @@ func (fr *FileRotator) setupCurrent() error {
 }
 
 func (fr *FileRotator) shouldRotate() bool {
-	if fr.size > fr.maxSize || time.Now().Sub(fr.startTime) > fr.maxAge {
+	if fr.size > fr.maxSize || time.Since(fr.startTime) > fr.maxAge {
 		return true
 	}
 	return false
