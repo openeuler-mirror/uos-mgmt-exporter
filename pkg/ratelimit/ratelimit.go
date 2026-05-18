@@ -4,6 +4,7 @@ package ratelimit
 
 import (
 	"errors"
+	"sync"
 	"time"
 )
 
@@ -17,7 +18,7 @@ type RateLimiter struct {
 	tokens chan struct{}
 	limit  time.Duration
 	ticker *time.Ticker
-	closed bool
+	stopOnce sync.Once
 }
 
 func NewRateLimiter(limit time.Duration, chanSize int) (*RateLimiter, error) {
@@ -61,8 +62,7 @@ func (rl *RateLimiter) Get() error {
 
 func (rl *RateLimiter) Stop() {
 	rl.ticker.Stop()
-	if !rl.closed {
-		rl.closed = true
+	rl.stopOnce.Do(func() {
 		close(rl.tokens)
-	}
+	})
 }
