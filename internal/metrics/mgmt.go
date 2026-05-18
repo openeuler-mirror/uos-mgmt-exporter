@@ -142,7 +142,7 @@ func (p *Prometheus) UpdateState(resUUID string, rtype string, newState ResState
 		} else if newState == ResStateHardFail {
 			strState = "hard"
 		} else {
-			return errors.New("state should be soft or hard failure")
+			return errors.New("state must be soft or hard failure")
 		}
 
 		// 更新 failedResourcesTotal 指标
