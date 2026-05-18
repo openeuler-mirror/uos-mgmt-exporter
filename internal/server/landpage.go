@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"bytes"
 	"net/http"
-	"text/template"
+	"html/template"
 )
 
 type LandingPageConfig struct {
