@@ -266,7 +266,7 @@ func (s *Server) Run() error {
 	go utils.HandleSignals(s.Exit)
 	logrus.Infof("%s successfully setup. SetUp running.", s.Name)
 
-	logrus.Infof("Runing  %s", s.Name)
+	logrus.Infof("Running %s", s.Name)
 	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		logrus.Errorf("ListenAndServe Error: %s\n", err)
 		return err
