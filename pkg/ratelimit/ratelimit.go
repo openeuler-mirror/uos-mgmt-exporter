@@ -61,19 +61,4 @@ func (rl *RateLimiter) Get() error {
 func (rl *RateLimiter) Stop() {
 	rl.ticker.Stop()
 	close(rl.tokens)
-	clearChannel(rl.tokens)
-
-}
-
-func clearChannel(ch chan struct{}) {
-	for {
-		select {
-		case _, ok := <-ch:
-			if !ok {
-				return
-			}
-		default:
-			return
-		}
-	}
 }
