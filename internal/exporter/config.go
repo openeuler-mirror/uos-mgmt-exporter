@@ -3,11 +3,12 @@
 package exporter
 
 import (
+	"os"
+	"time"
+
 	"github.com/alecthomas/kingpin"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"os"
-	"time"
 	"uos-mgmt-exporter/pkg/logger"
 	"uos-mgmt-exporter/pkg/utils"
 )
