@@ -51,12 +51,8 @@ func (rl *RateLimiter) startRefreshTokens() {
 
 func (rl *RateLimiter) Get() error {
 	select {
-	case _, ok := <-rl.tokens:
-		if ok {
-			return nil
-		} else {
-			return ErrRateLimited
-		}
+	case <-rl.tokens:
+		return nil
 	default:
 		return ErrRateLimited
 	}
