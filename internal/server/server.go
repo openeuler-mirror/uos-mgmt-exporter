@@ -217,13 +217,13 @@ func (s *Server) parse() error {
 func (s *Server) loadConfig() error {
 	content, err := os.ReadFile(*exporter.Configfile)
 	if err != nil {
-		logrus.Errorf("Failed to read config file: %v", err)
+		logrus.Warnf("Failed to read config file: %v", err)
 		logrus.Info("Use default config")
 		return nil
 	}
 	err = yaml.Unmarshal(content, &s.CommonConfig)
 	if err != nil {
-		logrus.Errorf("Failed to parse config file: %v", err)
+		logrus.Warnf("Failed to parse config file: %v", err)
 		logrus.Info("Use default config")
 		return nil
 	}
