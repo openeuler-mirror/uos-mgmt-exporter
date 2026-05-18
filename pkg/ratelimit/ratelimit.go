@@ -17,6 +17,7 @@ type RateLimiter struct {
 	tokens chan struct{}
 	limit  time.Duration
 	ticker *time.Ticker
+	closed bool
 }
 
 func NewRateLimiter(limit time.Duration, chanSize int) (*RateLimiter, error) {
@@ -60,5 +61,8 @@ func (rl *RateLimiter) Get() error {
 
 func (rl *RateLimiter) Stop() {
 	rl.ticker.Stop()
-	close(rl.tokens)
+	if !rl.closed {
+		rl.closed = true
+		close(rl.tokens)
+	}
 }
