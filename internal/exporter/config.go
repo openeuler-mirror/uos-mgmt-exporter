@@ -51,6 +51,7 @@ func Unpack(config interface{}) error {
 			logrus.Error("Failed to open config file: ", err)
 			return err
 		}
+		defer file.Close()
 		err = yaml.NewDecoder(file).Decode(config)
 		if err != nil {
 			return err
