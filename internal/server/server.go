@@ -101,13 +101,6 @@ func (s *Server) createRequest(w http.ResponseWriter, r *http.Request) *Request 
 	return req
 }
 
-// 获取 Name 字段的线程安全方法
-func (s *Server) getName() string {
-	// s.mu.RLock()
-	// defer s.mu.RUnlock()
-	return s.Name
-}
-
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	req := s.createRequest(w, r)
 	for _, handler := range s.handlers {
@@ -180,7 +173,7 @@ func (s *Server) healthzHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	response := healthzResponse{
 		Status:  "ok",
-		Message: fmt.Sprintf("%s is running normally.", s.getName()),
+		Message: fmt.Sprintf("%s is running normally.", s.Name),
 	}
 
 	// 设置响应头为 JSON 格式
