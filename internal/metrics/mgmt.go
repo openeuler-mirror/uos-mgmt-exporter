@@ -3,12 +3,13 @@
 package metrics
 
 import (
-	"fmt"
 	"errors"
-	"sync"
+	"fmt"
 	"strconv"
-	"uos-mgmt-exporter/internal/exporter"
+	"sync"
+
 	"github.com/prometheus/client_golang/prometheus"
+	"uos-mgmt-exporter/internal/exporter"
 )
 
 type ResState int
