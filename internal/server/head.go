@@ -7,14 +7,10 @@ import (
 	"net/http"
 )
 
-type favicon struct {
-	body []byte
-}
+type favicon struct{}
 
 func NewFavicon() *favicon {
-	return &favicon{
-		body: faviconBodys,
-	}
+	return &favicon{}
 }
 
 func (f *favicon) ServeHTTP(w http.ResponseWriter, r *http.Request) {
