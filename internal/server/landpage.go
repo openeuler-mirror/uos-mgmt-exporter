@@ -3,10 +3,11 @@
 package server
 
 import (
-	"fmt"
 	"bytes"
-	"net/http"
 	"html/template"
+	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 type LandingPageConfig struct {
@@ -420,6 +421,6 @@ func (h *LandingPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 	if _, err := w.Write(h.landingPage); err != nil {
-		fmt.Printf("Warning: The response to writing to the login page failed: %v\n", err)
+		logrus.Warnf("Failed to write landing page response: %v", err)
 	}
 }
