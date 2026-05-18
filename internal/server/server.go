@@ -133,7 +133,9 @@ func (s *Server) setupHttpServer() error {
 	server := &http.Server{
 		Addr:        addr,
 		Handler:     mux,
-		ReadTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 	landConfig := LandingPageConfig{
 		Name:    s.Name,
