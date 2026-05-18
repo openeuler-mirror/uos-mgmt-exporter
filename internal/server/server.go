@@ -34,6 +34,7 @@ type Server struct {
 	Version        string
 	CommonConfig   exporter.Config
 	promReg        *prometheus.Registry
+	promHandler    http.Handler
 	handlers       []HandlerFunc
 	ExitSignal     chan struct{}
 	Error          error
@@ -109,11 +110,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	promhttp.HandlerFor(s.promReg, promhttp.HandlerOpts{}).ServeHTTP(w, r)
+	s.promHandler.ServeHTTP(w, r)
 }
 
 func (s *Server) setupHttpServer() error {
 	exporter.RegisterPrometheus(s.promReg)
+	s.promHandler = promhttp.HandlerFor(s.promReg, promhttp.HandlerOpts{})
 	mux := http.NewServeMux()
 
 	// 注册健康检查接口
